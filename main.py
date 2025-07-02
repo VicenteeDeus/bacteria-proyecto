@@ -21,6 +21,7 @@ def contador_de_resistencia(datos, total_pasos):
         arr[clave-1] += 1
   return arr
 
+
 class Simulador(Gtk.ApplicationWindow):
 
   def __init__(self, *args, **kwargs):
