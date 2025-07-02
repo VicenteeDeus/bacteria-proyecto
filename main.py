@@ -32,6 +32,7 @@ class Simulador(Gtk.ApplicationWindow):
     self.set_title("Simulador Bacteriano en GTK 4.0")
     self.set_default_size(1000, 1000)
 
+    
     # Crea la colonia 
     self.colonia = Colonia()
 
