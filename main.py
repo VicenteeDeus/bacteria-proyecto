@@ -6,7 +6,6 @@ import gi
 import sys
 import cairo
 import io
-
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Gtk, Gio, Adw, Gdk, GLib
