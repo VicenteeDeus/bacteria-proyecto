@@ -44,6 +44,7 @@ class Bacteria:
     self.energia += energia
     return energia # retorna la energia consumida
 
+    
   def dividirse(self, div_energia):
     if self.energia >= div_energia:
       # Supongamos que se necesita 10 de energía para dividirse
