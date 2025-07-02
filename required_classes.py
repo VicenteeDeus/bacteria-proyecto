@@ -3,7 +3,6 @@ import pandas as pd
 import uuid
 from enum import Enum
 
-
 class Tipo_Bacteria(Enum):
     ACTIVA = 1
     MUERTA = 2
