@@ -1,15 +1,15 @@
 from required_classes import Ambiente, Colonia, Tipo_Bacteria
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt #grilla y grafico 
 import numpy as np
-from matplotlib.patches import Patch
-import gi
-import sys
-import cairo
-import io
+from matplotlib.patches import Patch #grilla
+import gi 
+import sys 
+import cairo #genera una imagen en cada paso (para que pueda graficar se pasa a imagen el grafico)
+import io #<--#hace un buffer                (asi se ve la expansion de las bacterias)
+
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Gtk, Gio, Adw, Gdk, GLib
-
 
 provider = Gtk.CssProvider()
 provider.load_from_path("style.css")
@@ -28,7 +28,7 @@ class Simulador(Gtk.ApplicationWindow):
     super().__init__(*args, **kwargs)
     
     # Configuración de la ventana principal
-    self.set_title("Simulador Bacteriano en GTK 4.0")
+    self.set_title("Simulador de bacterias")
     self.set_default_size(1000, 1000)
 
     # Crea la colonia 
@@ -82,12 +82,9 @@ class Simulador(Gtk.ApplicationWindow):
     plt.show()
 
   def random_values(self):
-
-    grilla = np.zeros((20, 20), dtype=int) # grilla del ambiente 
-    nutrientes = np.zeros((20, 20), dtype=int) # grilla de nutrientes 
-    factor_ambiental = np.zeros((20, 20), dtype=int) # grilla de factores ambientales (1) zona antibiotico, (0) zona normal
+    
     # Definimos posiciones de bacterias activas (1), muertas (2), resistentes (3), biofilm (4)   
-    ambiente = Ambiente(grilla=grilla,nutrientes=nutrientes, factor_ambiental=factor_ambiental)
+    ambiente = Ambiente()
 
     # Difusión de elementos en la grilla 
     ambiente.difundir_nutrientes()
@@ -123,7 +120,7 @@ class Simulador(Gtk.ApplicationWindow):
     screen_frame = Gtk.Frame()
     self.drawing_area = Gtk.DrawingArea()
     self.drawing_area.set_content_width(400)
-    self.drawing_area.set_content_height(600)
+    self.drawing_area.set_content_height(400)
     self.drawing_area.set_draw_func(self.on_draw)
     screen_frame.set_child(self.drawing_area)
 
@@ -140,8 +137,11 @@ class Simulador(Gtk.ApplicationWindow):
       
     self.curr_grilla, paso_actual = self.colonia.paso()
 
+    if paso_actual > self.pasos_totales:
+      return False
+
     datos = {
-      "paso_actual": self.paso_actual,
+      "paso_actual": paso_actual,
       "activas": 0,
       "muertas": 0,
       "resistentes": 0,
@@ -177,9 +177,9 @@ class Simulador(Gtk.ApplicationWindow):
   def create_plot(self):
 
     cmap = plt.cm.get_cmap('Set1', 5)
-    fig , ax = plt.subplots(figsize=(10, 6))
+    fig , ax = plt.subplots(figsize=(8, 4))
     cax = ax.matshow(self.curr_grilla, cmap=cmap)
-    ax.set_title("Gráfico dinámico")
+    ax.set_title("Grilla")
 
     legend_elements = [
       Patch(facecolor=cmap(1/5) , label='Bacteria activa'),
@@ -188,7 +188,7 @@ class Simulador(Gtk.ApplicationWindow):
       Patch(facecolor=cmap(4/5) , label='Biofilm'),
     ]
 
-    ax.legend(handles=legend_elements , loc='upper right', bbox_to_anchor=(1.45 , 1))
+    ax.legend(handles=legend_elements , loc='upper right', bbox_to_anchor=(1.7 , 1))
     ax.set_xticks(np.arange (0, 20, 1))
     ax.set_yticks(np.arange (0, 20, 1))
     ax.set_xticklabels([])
@@ -391,7 +391,7 @@ class Simulador(Gtk.ApplicationWindow):
     # Crear un botón con icono
     content = Adw.ButtonContent()
     content.set_icon_name("x-office-document-template")
-    content.set_label("Descargar Excel")
+    content.set_label("Descargar csv")
     content.add_css_class("mi-boton-content")
 
     button = Gtk.Button()
